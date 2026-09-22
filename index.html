@@ -437,6 +437,12 @@
                     </div>
                 </div>
 
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+                    <div class="glass-card p-6 rounded-3xl shadow-xl bg-white border border-gray-100 xl:col-span-3">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">معدل الإدخالات</h3>
+                        <div id="sectionSummaryCards" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+                    </div>
+                </div>
                 <div class="glass-panel p-6 rounded-3xl shadow-xl bg-white border border-gray-100">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6">إحصائيات الأقسام (تفصيلي)</h3>
                     <div id="adminSectionGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
@@ -447,6 +453,9 @@
                             <h3 class="text-2xl font-bold text-gray-800">تقارير</h3>
                             <p class="text-sm text-gray-500 mt-1">عرض وتنزيل ملفات التقارير الرئيسية مباشرة من هنا.</p>
                         </div>
+                        <button onclick="downloadMirrorReport()" class="btn-3d btn-3d-green px-6 py-3">
+                            <i class="fa-solid fa-download ml-2"></i> تنزيل جميع الملفات
+                        </button>
                     </div>
                     <div id="reportsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
@@ -853,6 +862,24 @@ async function loadAdminDashboard() {
     renderHourlyChart(dashboard.entriesByHour || {});
     renderCommitteesDoughnut(dashboard.openCommittees || 0, dashboard.closedCommittees || 0);
     renderSectionsBarChart(dashboard.sectionStats || []);
+
+    const sectionSummaryCards = document.getElementById('sectionSummaryCards');
+    sectionSummaryCards.innerHTML = '';
+    (dashboard.sectionStats || []).slice(0, 4).forEach(stat => {
+        const summaryCard = document.createElement('div');
+        summaryCard.className = 'p-4 rounded-2xl bg-slate-50 border border-slate-200';
+        summaryCard.innerHTML = `
+            <div class="flex justify-between items-center mb-3">
+                <h4 class="font-bold text-gray-800">${stat.section}</h4>
+                <span class="text-sm text-gray-500">${stat.entries} إدخالات</span>
+            </div>
+            <div class="flex gap-3 text-sm text-gray-600">
+                <span class="px-3 py-2 rounded-full bg-blue-100 text-blue-700">مفتوح: ${stat.openCommittees}</span>
+                <span class="px-3 py-2 rounded-full bg-red-100 text-red-700">مغلق: ${stat.closedCommittees}</span>
+            </div>
+        `;
+        sectionSummaryCards.appendChild(summaryCard);
+    });
 
     const adminSectionGrid = document.getElementById('adminSectionGrid');
     adminSectionGrid.innerHTML = '';
